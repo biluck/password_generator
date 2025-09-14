@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import { Card, CardContent, CardHeader, CardTitle } from "./components/ui/card";
-import SliderInput from "./components/ui/sliderInput";
 import SwitchInput from "./components/ui/switchInput";
 import uppercase from "./assets/uppercase.png"
 import lowercase from "./assets/lowercase.png"
 import numbers from "./assets/numbers.png"
 import symbols from "./assets/symbols.png"
+import InputField from "./components/ui/inputField";
+import { Slider } from "./components/ui/slider";
 
 const DEFAULT_PASSWORD_LENGTH = 6;
 const MIN_PASSWORD_LENGTH = 6;
@@ -43,6 +44,36 @@ function App() {
     console.log(`Symbols = ${hasSymbols}`);
   }, [hasUpper, passLength, hasSymbols, hasLower, hasNumber])
 
+  const switchOptions = [
+    {
+      id: 'uppercase',
+      src: uppercase,
+      label: 'Uppercase letters',
+      checked: hasUpper,
+      onCheckedChange: handleHasUpperValue
+    },
+    {
+      id: 'lowercase',
+      src: lowercase,
+      label: 'Lowercase letters',
+      checked: hasLower,
+      onCheckedChange: handleHasLowerValue
+    },
+    {
+      id: 'number',
+      src: numbers,
+      label: 'Numbers',
+      checked: hasNumber,
+      onCheckedChange: handleHasNumberValue
+    },
+    {
+      id: 'symbols',
+      src: symbols,
+      label: 'Symbols',
+      checked: hasSymbols,
+      onCheckedChange: handleHasSymbolsValue
+    },
+  ]
   return (
     <Card className="w-[40%] m-auto">
       <CardHeader>
@@ -51,38 +82,24 @@ function App() {
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
-        <SliderInput
-          label={`Password length : ${passLength}`}
-          defaultValue={[DEFAULT_PASSWORD_LENGTH]}
-          minValue={MIN_PASSWORD_LENGTH}
-          maxValue={MAX_PASSWORD_LENGTH}
-          step={1}
-          onValueChange={handleSliderValue}
-        ></SliderInput>
-        <SwitchInput
-          src={uppercase}
-          label="Uppercase letters"
-          checked={hasUpper}
-          onCheckedChange={handleHasUpperValue}
-        ></SwitchInput>
-        <SwitchInput
-          src={lowercase}
-          label="Lowercase letters"
-          checked={hasLower}
-          onCheckedChange={handleHasLowerValue}
-        ></SwitchInput>
-        <SwitchInput
-          src={numbers}
-          label="Numbers"
-          checked={hasNumber}
-          onCheckedChange={handleHasNumberValue}
-        ></SwitchInput>
-        <SwitchInput
-          src={symbols}
-          label="Symbols"
-          checked={hasSymbols}
-          onCheckedChange={handleHasSymbolsValue}
-        ></SwitchInput>
+        <InputField label={`Password length : ${passLength}`}>
+          <Slider
+            defaultValue={[DEFAULT_PASSWORD_LENGTH]}
+            min={MIN_PASSWORD_LENGTH}
+            max={MAX_PASSWORD_LENGTH}
+            step={1}
+            onValueChange={handleSliderValue}
+          ></Slider>
+        </InputField>
+        {switchOptions.map((option) => (
+          <SwitchInput
+            key={option.id}
+            label={option.label}
+            src={option.src}
+            checked={option.checked}
+            onCheckedChange={option.onCheckedChange}
+          ></SwitchInput>
+        ))}
       </CardContent>
     </Card>
   );

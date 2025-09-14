@@ -1,5 +1,4 @@
 import "../../App.css";
-import uppercase from "../../assets/uppercase.png"
 import { Switch } from "./switch";
 
 type SwitchInputType = {
