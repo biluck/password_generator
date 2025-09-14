@@ -8,6 +8,8 @@ import numbers from "./assets/numbers.png"
 import symbols from "./assets/symbols.png"
 import InputField from "./components/ui/inputField";
 import { Slider } from "./components/ui/slider";
+import { ThemeProvider } from "./components/theme-provider";
+import { ModeToggle } from "./components/ui/mode-toogle";
 
 const DEFAULT_PASSWORD_LENGTH = 6;
 const MIN_PASSWORD_LENGTH = 6;
@@ -37,12 +39,11 @@ function App() {
   }
 
   useEffect(() => {
-    console.log(`Password length = ${passLength}`);
-    console.log(`Uppercase = ${hasUpper}`);
-    console.log(`Lowercase ${hasLower}`);
-    console.log(`Numbers = ${hasNumber}`);
-    console.log(`Symbols = ${hasSymbols}`);
-  }, [hasUpper, passLength, hasSymbols, hasLower, hasNumber])
+    if (!hasUpper && !hasLower && !hasNumber && !hasSymbols) {
+      setHasLower(true);
+      setHasNumber(true);
+    }
+  }, [hasUpper, hasSymbols, hasLower, hasNumber])
 
   const switchOptions = [
     {
@@ -75,33 +76,36 @@ function App() {
     },
   ]
   return (
-    <Card className="w-[40%] m-auto">
-      <CardHeader>
-        <CardTitle className="text-center">
-          Generate random password
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-3">
-        <InputField label={`Password length : ${passLength}`}>
-          <Slider
-            defaultValue={[DEFAULT_PASSWORD_LENGTH]}
-            min={MIN_PASSWORD_LENGTH}
-            max={MAX_PASSWORD_LENGTH}
-            step={1}
-            onValueChange={handleSliderValue}
-          ></Slider>
-        </InputField>
-        {switchOptions.map((option) => (
-          <SwitchInput
-            key={option.id}
-            label={option.label}
-            src={option.src}
-            checked={option.checked}
-            onCheckedChange={option.onCheckedChange}
-          ></SwitchInput>
-        ))}
-      </CardContent>
-    </Card>
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <Card className="w-[40%] m-auto">
+        <CardHeader className="flex flex-row items-center justify-center">
+          <CardTitle className="text-center grow">
+            Generate random password
+          </CardTitle>
+          <ModeToggle></ModeToggle>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3">
+          <InputField label={`Password length : ${passLength}`}>
+            <Slider
+              defaultValue={[DEFAULT_PASSWORD_LENGTH]}
+              min={MIN_PASSWORD_LENGTH}
+              max={MAX_PASSWORD_LENGTH}
+              step={1}
+              onValueChange={handleSliderValue}
+            ></Slider>
+          </InputField>
+          {switchOptions.map((option) => (
+            <SwitchInput
+              key={option.id}
+              label={option.label}
+              src={option.src}
+              checked={option.checked}
+              onCheckedChange={option.onCheckedChange}
+            ></SwitchInput>
+          ))}
+        </CardContent>
+      </Card>
+    </ThemeProvider>
   );
 }
 
