@@ -7,7 +7,7 @@ type SliderInputProps = {
   minValue: number;
   maxValue: number;
   step: number;
-  onValueChange: (value: number[]) => void;
+  onValueChange?: (value: number[]) => void;
 }
 
 export default function SliderInput({ label, defaultValue, minValue, maxValue, step, onValueChange }: SliderInputProps) {
