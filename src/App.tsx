@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { Card, CardContent, CardHeader, CardTitle } from "./components/ui/card";
-import SwitchInput from "./components/ui/switchInput";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "./components/ui/card";
+import SwitchInput from "./components/ui/switch-input";
 import uppercase from "./assets/uppercase.png"
 import lowercase from "./assets/lowercase.png"
 import numbers from "./assets/numbers.png"
 import symbols from "./assets/symbols.png"
-import InputField from "./components/ui/inputField";
+import InputField from "./components/ui/input-field";
 import { Slider } from "./components/ui/slider";
 import { ThemeProvider } from "./components/theme-provider";
 import { ModeToggle } from "./components/ui/mode-toogle";
+import { Button } from "./components/ui/button";
+import { Loader2 } from "lucide-react";
+import * as chars from "./constants/characters";
 
 const DEFAULT_PASSWORD_LENGTH = 6;
 const MIN_PASSWORD_LENGTH = 6;
@@ -21,6 +24,7 @@ function App() {
   const [hasLower, setHasLower] = useState(true);
   const [hasNumber, setHasNumber] = useState(true);
   const [hasSymbols, setHasSymbols] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const handleSliderValue = (value: number[]) => {
     setPassLength(value[0]);
@@ -36,6 +40,60 @@ function App() {
   }
   const handleHasSymbolsValue = (checked: boolean) => {
     setHasSymbols(checked);
+  }
+
+  const choice = (value: string): string => {
+    const array = new Uint32Array(1);
+    const maxValidValue = Math.floor(0xFFFFFFFF / value.length) * value.length;
+    do {
+      crypto.getRandomValues(array);
+    } while (array[0] >= maxValidValue);
+    return (value[array[0] % value.length])
+  }
+
+  const shuffleArray = (value: string): string => {
+    const array = value.split('');
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return (array.join(''));
+  }
+
+  const asyncGeneration = async () => {
+    setIsGenerating(true);
+    await new Promise(resolve => setTimeout(resolve, 800));
+    let requiredChars: string = "";
+    let allChars: string = "";
+    let password: string = "";
+    if (hasUpper) {
+      allChars += chars.ASCII_UPPERCASE;
+      requiredChars += choice(chars.ASCII_UPPERCASE);
+    }
+    if (hasLower) {
+      allChars += chars.ASCII_LOWERCASE
+      requiredChars += choice(chars.ASCII_LOWERCASE);
+    }
+    if (hasNumber) {
+      allChars += chars.DIGITS;
+      requiredChars += choice(chars.DIGITS);
+    }
+    if (hasSymbols) {
+      allChars += chars.PUNCTUATION;
+      requiredChars += choice(chars.PUNCTUATION);
+    }
+    password += requiredChars;
+    let charsLeft: number = passLength - requiredChars.length;
+    while (charsLeft > 0) {
+      password += choice(allChars);
+      charsLeft--;
+    }
+    console.log(password);
+    password = shuffleArray(password);
+    console.log(charsLeft);
+    console.log(password);
+    console.log("Password generated");
+    setIsGenerating(false);
   }
 
   useEffect(() => {
@@ -104,6 +162,20 @@ function App() {
             ></SwitchInput>
           ))}
         </CardContent>
+        <CardFooter className="flex">
+          <Button className="grow cursor-pointer" onClick={asyncGeneration} disabled={isGenerating}>
+            {
+              isGenerating ? (
+                <>
+                  <Loader2 className="animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                "Generate password"
+              )
+            }
+          </Button>
+        </CardFooter>
       </Card>
     </ThemeProvider>
   );
