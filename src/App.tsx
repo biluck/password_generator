@@ -19,15 +19,13 @@ import { ModeToggle } from "./components/ui/mode-toogle";
 import { Button } from "./components/ui/button";
 import { CheckIcon, CopyIcon, Loader2 } from "lucide-react";
 import * as chars from "./constants/characters";
+import * as vals from "./constants/values";
+import * as random from "./lib/random";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "./components/ui/tooltip";
-
-const DEFAULT_PASSWORD_LENGTH = 6;
-const MIN_PASSWORD_LENGTH = 6;
-const MAX_PASSWORD_LENGTH = 25;
 
 function App() {
   const [passLength, setPassLength] = useState(6);
@@ -60,24 +58,6 @@ function App() {
     setTimeout(() => setCopied(false), 1200);
   };
 
-  const choice = (value: string): string => {
-    const array = new Uint32Array(1);
-    const maxValidValue = Math.floor(0xffffffff / value.length) * value.length;
-    do {
-      crypto.getRandomValues(array);
-    } while (array[0] >= maxValidValue);
-    return value[array[0] % value.length];
-  };
-
-  const shuffleArray = (value: string): string => {
-    const array = value.split("");
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array.join("");
-  };
-
   const asyncGeneration = async () => {
     setIsGenerating(true);
     await new Promise((resolve) => setTimeout(resolve, 800));
@@ -86,27 +66,27 @@ function App() {
     let password: string = "";
     if (hasUpper) {
       allChars += chars.ASCII_UPPERCASE;
-      requiredChars += choice(chars.ASCII_UPPERCASE);
+      requiredChars += random.choice(chars.ASCII_UPPERCASE);
     }
     if (hasLower) {
       allChars += chars.ASCII_LOWERCASE;
-      requiredChars += choice(chars.ASCII_LOWERCASE);
+      requiredChars += random.choice(chars.ASCII_LOWERCASE);
     }
     if (hasNumber) {
       allChars += chars.DIGITS;
-      requiredChars += choice(chars.DIGITS);
+      requiredChars += random.choice(chars.DIGITS);
     }
     if (hasSymbols) {
       allChars += chars.PUNCTUATION;
-      requiredChars += choice(chars.PUNCTUATION);
+      requiredChars += random.choice(chars.PUNCTUATION);
     }
     password += requiredChars;
     let charsLeft: number = passLength - requiredChars.length;
     while (charsLeft > 0) {
-      password += choice(allChars);
+      password += random.choice(allChars);
       charsLeft--;
     }
-    password = shuffleArray(password);
+    password = random.shuffleArray(password);
     setPassword(password);
     setIsGenerating(false);
     return password;
@@ -170,9 +150,9 @@ function App() {
         <CardContent className="flex flex-col gap-3">
           <InputField label={`Password length : ${passLength}`}>
             <Slider
-              defaultValue={[DEFAULT_PASSWORD_LENGTH]}
-              min={MIN_PASSWORD_LENGTH}
-              max={MAX_PASSWORD_LENGTH}
+              defaultValue={[vals.DEFAULT_PASSWORD_LENGTH]}
+              min={vals.MIN_PASSWORD_LENGTH}
+              max={vals.MAX_PASSWORD_LENGTH}
               step={1}
               onValueChange={handleSliderValue}
             ></Slider>
