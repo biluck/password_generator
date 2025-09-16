@@ -1,11 +1,17 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "./components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./components/ui/card";
 import SwitchInput from "./components/ui/switch-input";
-import uppercase from "./assets/uppercase.png"
-import lowercase from "./assets/lowercase.png"
-import numbers from "./assets/numbers.png"
-import symbols from "./assets/symbols.png"
+import uppercase from "./assets/uppercase.png";
+import lowercase from "./assets/lowercase.png";
+import numbers from "./assets/numbers.png";
+import symbols from "./assets/symbols.png";
 import InputField from "./components/ui/input-field";
 import { Slider } from "./components/ui/slider";
 import { ThemeProvider } from "./components/theme-provider";
@@ -25,44 +31,45 @@ function App() {
   const [hasNumber, setHasNumber] = useState(true);
   const [hasSymbols, setHasSymbols] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [password, setPassword] = useState("");
 
   const handleSliderValue = (value: number[]) => {
     setPassLength(value[0]);
-  }
+  };
   const handleHasUpperValue = (checked: boolean) => {
     setHasUpper(checked);
-  }
+  };
   const handleHasLowerValue = (checked: boolean) => {
     setHasLower(checked);
-  }
+  };
   const handleHasNumberValue = (checked: boolean) => {
     setHasNumber(checked);
-  }
+  };
   const handleHasSymbolsValue = (checked: boolean) => {
     setHasSymbols(checked);
-  }
+  };
 
   const choice = (value: string): string => {
     const array = new Uint32Array(1);
-    const maxValidValue = Math.floor(0xFFFFFFFF / value.length) * value.length;
+    const maxValidValue = Math.floor(0xffffffff / value.length) * value.length;
     do {
       crypto.getRandomValues(array);
     } while (array[0] >= maxValidValue);
-    return (value[array[0] % value.length])
-  }
+    return value[array[0] % value.length];
+  };
 
   const shuffleArray = (value: string): string => {
-    const array = value.split('');
+    const array = value.split("");
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [array[i], array[j]] = [array[j], array[i]];
     }
-    return (array.join(''));
-  }
+    return array.join("");
+  };
 
   const asyncGeneration = async () => {
     setIsGenerating(true);
-    await new Promise(resolve => setTimeout(resolve, 800));
+    await new Promise((resolve) => setTimeout(resolve, 800));
     let requiredChars: string = "";
     let allChars: string = "";
     let password: string = "";
@@ -71,7 +78,7 @@ function App() {
       requiredChars += choice(chars.ASCII_UPPERCASE);
     }
     if (hasLower) {
-      allChars += chars.ASCII_LOWERCASE
+      allChars += chars.ASCII_LOWERCASE;
       requiredChars += choice(chars.ASCII_LOWERCASE);
     }
     if (hasNumber) {
@@ -88,51 +95,58 @@ function App() {
       password += choice(allChars);
       charsLeft--;
     }
-    console.log(password);
     password = shuffleArray(password);
-    console.log(charsLeft);
-    console.log(password);
-    console.log("Password generated");
+    setPassword(password);
     setIsGenerating(false);
-  }
+    return password;
+  };
+
+  useEffect(() => {
+    async function generatePassword() {
+      let password: string = "";
+      password = await asyncGeneration();
+      setPassword(password);
+    }
+    generatePassword();
+  }, []);
 
   useEffect(() => {
     if (!hasUpper && !hasLower && !hasNumber && !hasSymbols) {
       setHasLower(true);
       setHasNumber(true);
     }
-  }, [hasUpper, hasSymbols, hasLower, hasNumber])
+  }, [hasUpper, hasSymbols, hasLower, hasNumber]);
 
   const switchOptions = [
     {
-      id: 'uppercase',
+      id: "uppercase",
       src: uppercase,
-      label: 'Uppercase letters',
+      label: "Uppercase letters",
       checked: hasUpper,
-      onCheckedChange: handleHasUpperValue
+      onCheckedChange: handleHasUpperValue,
     },
     {
-      id: 'lowercase',
+      id: "lowercase",
       src: lowercase,
-      label: 'Lowercase letters',
+      label: "Lowercase letters",
       checked: hasLower,
-      onCheckedChange: handleHasLowerValue
+      onCheckedChange: handleHasLowerValue,
     },
     {
-      id: 'number',
+      id: "number",
       src: numbers,
-      label: 'Numbers',
+      label: "Numbers",
       checked: hasNumber,
-      onCheckedChange: handleHasNumberValue
+      onCheckedChange: handleHasNumberValue,
     },
     {
-      id: 'symbols',
+      id: "symbols",
       src: symbols,
-      label: 'Symbols',
+      label: "Symbols",
       checked: hasSymbols,
-      onCheckedChange: handleHasSymbolsValue
+      onCheckedChange: handleHasSymbolsValue,
     },
-  ]
+  ];
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <Card className="w-[40%] m-auto">
@@ -162,18 +176,23 @@ function App() {
             ></SwitchInput>
           ))}
         </CardContent>
-        <CardFooter className="flex">
-          <Button className="grow cursor-pointer" onClick={asyncGeneration} disabled={isGenerating}>
-            {
-              isGenerating ? (
-                <>
-                  <Loader2 className="animate-spin" />
-                  Generating...
-                </>
-              ) : (
-                "Generate password"
-              )
-            }
+        <CardFooter className="flex flex-col gap-3">
+          <div className="flex h-[35px] justify-center items-center w-full border-1 p-1 rounded-md">
+            {password}
+          </div>
+          <Button
+            className="w-full cursor-pointer"
+            onClick={asyncGeneration}
+            disabled={isGenerating}
+          >
+            {isGenerating ? (
+              <>
+                <Loader2 className="animate-spin" />
+                Generating...
+              </>
+            ) : (
+              "Generate password"
+            )}
           </Button>
         </CardFooter>
       </Card>
