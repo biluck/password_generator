@@ -115,11 +115,10 @@
     @apply border-border outline-ring/50;
     padding: 0;
     margin: 0;
-    box-sizing: border-box
+    box-sizing: border-box;
   }
 
   body {
     @apply bg-background text-foreground;
-    padding: 20px;
   }
 }

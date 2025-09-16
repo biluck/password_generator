@@ -140,69 +140,71 @@ function App() {
   ];
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <Card className="w-[40%] m-auto">
-        <CardHeader className="flex flex-row items-center justify-center">
-          <CardTitle className="text-center grow">
-            Generate random password
-          </CardTitle>
-          <ModeToggle></ModeToggle>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-3">
-          <InputField label={`Password length : ${passLength}`}>
-            <Slider
-              value={[passLength]}
-              min={vals.MIN_PASSWORD_LENGTH}
-              max={vals.MAX_PASSWORD_LENGTH}
-              step={1}
-              onValueChange={handleSliderValue}
-            ></Slider>
-          </InputField>
-          {switchOptions.map((option) => (
-            <SwitchInput
-              key={option.id}
-              label={option.label}
-              src={option.src}
-              checked={option.checked}
-              onCheckedChange={option.onCheckedChange}
-            ></SwitchInput>
-          ))}
-        </CardContent>
-        <CardFooter className="flex flex-col gap-3">
-          <div className="flex gap-1 items-center w-full h-[35px]">
-            <p className="flex grow justify-center p-1 border-2 rounded-md h-full">
-              {password}
-            </p>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="secondary" size="icon" onClick={handleCopy}>
-                  {copied ? (
-                    <CheckIcon className="text-green-500" />
-                  ) : (
-                    <CopyIcon />
-                  )}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                {copied ? <p>Copied !</p> : <p>Copy password to clipboard</p>}
-              </TooltipContent>
-            </Tooltip>
-          </div>
-          <Button
-            className="w-full cursor-pointer"
-            onClick={asyncGeneration}
-            disabled={isGenerating}
-          >
-            {isGenerating ? (
-              <>
-                <Loader2 className="animate-spin" />
-                Generating...
-              </>
-            ) : (
-              "Generate password"
-            )}
-          </Button>
-        </CardFooter>
-      </Card>
+      <div className="flex justify-center items-center w-dvw h-dvh">
+        <Card className="w-[30%] m-auto">
+          <CardHeader className="flex flex-row items-center justify-center">
+            <CardTitle className="text-center grow">
+              Generate random password
+            </CardTitle>
+            <ModeToggle></ModeToggle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3">
+            <InputField label={`Password length : ${passLength}`}>
+              <Slider
+                value={[passLength]}
+                min={vals.MIN_PASSWORD_LENGTH}
+                max={vals.MAX_PASSWORD_LENGTH}
+                step={1}
+                onValueChange={handleSliderValue}
+              ></Slider>
+            </InputField>
+            {switchOptions.map((option) => (
+              <SwitchInput
+                key={option.id}
+                label={option.label}
+                src={option.src}
+                checked={option.checked}
+                onCheckedChange={option.onCheckedChange}
+              ></SwitchInput>
+            ))}
+          </CardContent>
+          <CardFooter className="flex flex-col gap-3">
+            <div className="flex gap-1 items-center w-full h-[35px]">
+              <p className="flex grow justify-center p-1 border-2 rounded-md h-full">
+                {password}
+              </p>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="secondary" size="icon" onClick={handleCopy}>
+                    {copied ? (
+                      <CheckIcon className="text-green-500" />
+                    ) : (
+                      <CopyIcon />
+                    )}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {copied ? <p>Copied !</p> : <p>Copy password to clipboard</p>}
+                </TooltipContent>
+              </Tooltip>
+            </div>
+            <Button
+              className="w-full cursor-pointer"
+              onClick={asyncGeneration}
+              disabled={isGenerating}
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 className="animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                "Generate password"
+              )}
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
     </ThemeProvider>
   );
 }
