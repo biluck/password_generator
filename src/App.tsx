@@ -17,8 +17,13 @@ import { Slider } from "./components/ui/slider";
 import { ThemeProvider } from "./components/theme-provider";
 import { ModeToggle } from "./components/ui/mode-toogle";
 import { Button } from "./components/ui/button";
-import { Loader2 } from "lucide-react";
+import { CheckIcon, CopyIcon, Loader2 } from "lucide-react";
 import * as chars from "./constants/characters";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "./components/ui/tooltip";
 
 const DEFAULT_PASSWORD_LENGTH = 6;
 const MIN_PASSWORD_LENGTH = 6;
@@ -32,6 +37,7 @@ function App() {
   const [hasSymbols, setHasSymbols] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [password, setPassword] = useState("");
+  const [copied, setCopied] = useState(false);
 
   const handleSliderValue = (value: number[]) => {
     setPassLength(value[0]);
@@ -47,6 +53,11 @@ function App() {
   };
   const handleHasSymbolsValue = (checked: boolean) => {
     setHasSymbols(checked);
+  };
+  const handleCopy = () => {
+    navigator.clipboard.writeText(password);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1200);
   };
 
   const choice = (value: string): string => {
@@ -177,8 +188,24 @@ function App() {
           ))}
         </CardContent>
         <CardFooter className="flex flex-col gap-3">
-          <div className="flex h-[35px] justify-center items-center w-full border-1 p-1 rounded-md">
-            {password}
+          <div className="flex gap-1 items-center w-full h-[35px]">
+            <p className="flex grow justify-center p-1 border-2 rounded-md h-full">
+              {password}
+            </p>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button variant="secondary" size="icon" onClick={handleCopy}>
+                  {copied ? (
+                    <CheckIcon className="text-green-500" />
+                  ) : (
+                    <CopyIcon />
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                {copied ? <p>Copied !</p> : <p>Copy password to clipboard</p>}
+              </TooltipContent>
+            </Tooltip>
           </div>
           <Button
             className="w-full cursor-pointer"
