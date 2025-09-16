@@ -150,7 +150,7 @@ function App() {
         <CardContent className="flex flex-col gap-3">
           <InputField label={`Password length : ${passLength}`}>
             <Slider
-              defaultValue={[vals.DEFAULT_PASSWORD_LENGTH]}
+              value={[passLength]}
               min={vals.MIN_PASSWORD_LENGTH}
               max={vals.MAX_PASSWORD_LENGTH}
               step={1}
@@ -173,7 +173,7 @@ function App() {
               {password}
             </p>
             <Tooltip>
-              <TooltipTrigger>
+              <TooltipTrigger asChild>
                 <Button variant="secondary" size="icon" onClick={handleCopy}>
                   {copied ? (
                     <CheckIcon className="text-green-500" />
