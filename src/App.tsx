@@ -141,7 +141,7 @@ function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <div className="flex justify-center items-center w-dvw h-dvh">
-        <Card className="w-[30%] m-auto">
+        <Card className="w-[80%] m-auto md:w-[50%] lg:w-[40%]">
           <CardHeader className="flex flex-row items-center justify-center">
             <CardTitle className="text-center grow">
               Generate random password
